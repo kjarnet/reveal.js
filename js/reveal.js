@@ -9,15 +9,14 @@ var Reveal = (function(){
 
 	'use strict';
 
-	var SLIDES_SELECTOR = '.reveal .slides section',
-		HORIZONTAL_SLIDES_SELECTOR = '.reveal .slides>section',
-		VERTICAL_SLIDES_SELECTOR = '.reveal .slides>section.present>section',
-		HOME_SLIDE_SELECTOR = '.reveal .slides>section:first-child',
+	var	config = { // Configurations defaults, can be overridden at initialization time
 
-		// Configurations defaults, can be overridden at initialization time
-		config = {
-
-			// The "normal" size of the presentation, aspect ratio will be preserved
+			slidesSelector : '.reveal .slides section',
+			horizontalSlidesSelector : '.reveal .slides>section',
+			verticalSlidesSelector : '.reveal .slides>section.present>section',
+			homeSlideSelector : '.reveal .slides>section:first-child',
+            
+			// The "normal" size of the presentation, aspect ratio will be preserved            
 			// when the presentation is scaled to fit different resolutions
 			width: 960,
 			height: 700,
@@ -575,7 +574,7 @@ var Reveal = (function(){
 	function enable3DLinks() {
 
 		if( supports3DTransforms && !( 'msPerspective' in document.body.style ) ) {
-			var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a:not(.image)' );
+			var anchors = document.querySelectorAll( config.slidesSelector + ' a:not(.image)' );
 
 			for( var i = 0, len = anchors.length; i < len; i++ ) {
 				var anchor = anchors[i];
@@ -599,7 +598,7 @@ var Reveal = (function(){
 	 */
 	function disable3DLinks() {
 
-		var anchors = document.querySelectorAll( SLIDES_SELECTOR + ' a.roll' );
+		var anchors = document.querySelectorAll( config.slidesSelector + ' a.roll' );
 
 		for( var i = 0, len = anchors.length; i < len; i++ ) {
 			var anchor = anchors[i];
@@ -702,7 +701,7 @@ var Reveal = (function(){
 			}
 
 			// Select all slides, vertical and horizontal
-			var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
+			var slides = toArray( document.querySelectorAll( config.slidesSelector ) );
 
 			for( var i = 0, len = slides.length; i < len; i++ ) {
 				var slide = slides[ i ];
@@ -793,7 +792,7 @@ var Reveal = (function(){
 			// before we can position them
 			activateOverviewTimeout = setTimeout( function(){
 
-				var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
+				var horizontalSlides = document.querySelectorAll( config.horizontalSlidesSelector );
 
 				for( var i = 0, len1 = horizontalSlides.length; i < len1; i++ ) {
 					var hslide = horizontalSlides[i],
@@ -880,7 +879,7 @@ var Reveal = (function(){
 			}, 10);
 
 			// Select all slides
-			var slides = toArray( document.querySelectorAll( SLIDES_SELECTOR ) );
+			var slides = toArray( document.querySelectorAll( config.slidesSelector ) );
 
 			for( var i = 0, len = slides.length; i < len; i++ ) {
 				var element = slides[i];
@@ -1036,7 +1035,7 @@ var Reveal = (function(){
 		previousSlide = currentSlide;
 
 		// Query all horizontal slides in the deck
-		var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
+		var horizontalSlides = document.querySelectorAll( config.horizontalSlidesSelector );
 
 		// If no vertical index is specified and the upcoming slide is a
 		// stack, resume at its previous vertical index
@@ -1060,8 +1059,8 @@ var Reveal = (function(){
 			indexvBefore = indexv;
 
 		// Activate and transition to the new slide
-		indexh = updateSlides( HORIZONTAL_SLIDES_SELECTOR, h === undefined ? indexh : h );
-		indexv = updateSlides( VERTICAL_SLIDES_SELECTOR, v === undefined ? indexv : v );
+		indexh = updateSlides( config.horizontalSlidesSelector, h === undefined ? indexh : h );
+		indexv = updateSlides( config.verticalSlidesSelector, v === undefined ? indexv : v );
 
 		layout();
 
@@ -1142,10 +1141,10 @@ var Reveal = (function(){
 
 			// Reset all slides upon navigate to home
 			// Issue: #285
-			if ( document.querySelector( HOME_SLIDE_SELECTOR ).classList.contains( 'present' ) ) {
+			if ( document.querySelector( config.homeSlideSelector ).classList.contains( 'present' ) ) {
 				// Launch async task
 				setTimeout( function () {
-					var slides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.stack') ), i;
+					var slides = toArray( document.querySelectorAll( config.horizontalSlidesSelector + '.stack') ), i;
 					for( i in slides ) {
 						if( slides[i] ) {
 							// Reset stack
@@ -1266,10 +1265,10 @@ var Reveal = (function(){
 		// Update progress if enabled
 		if( config.progress && dom.progress ) {
 
-			var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+			var horizontalSlides = toArray( document.querySelectorAll( config.horizontalSlidesSelector ) );
 
 			// The number of past and total slides
-			var totalCount = document.querySelectorAll( SLIDES_SELECTOR + ':not(.stack)' ).length;
+			var totalCount = document.querySelectorAll( config.slidesSelector + ':not(.stack)' ).length;
 			var pastCount = 0;
 
 			// Step through all slides and count the past ones
@@ -1346,8 +1345,8 @@ var Reveal = (function(){
 	 */
 	function availableRoutes() {
 
-		var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
-			verticalSlides = document.querySelectorAll( VERTICAL_SLIDES_SELECTOR );
+		var horizontalSlides = document.querySelectorAll( config.horizontalSlidesSelector ),
+			verticalSlides = document.querySelectorAll( config.verticalSlidesSelector );
 
 		return {
 			left: indexh > 0 || config.loop,
@@ -1454,7 +1453,7 @@ var Reveal = (function(){
 			var slideh = isVertical ? slide.parentNode : slide;
 
 			// Select all horizontal slides
-			var horizontalSlides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+			var horizontalSlides = toArray( document.querySelectorAll( config.horizontalSlidesSelector ) );
 
 			// Now that we know which the horizontal slide is, get its index
 			h = Math.max( horizontalSlides.indexOf( slideh ), 0 );
@@ -1478,8 +1477,8 @@ var Reveal = (function(){
 	function nextFragment() {
 
 		// Vertical slides:
-		if( document.querySelector( VERTICAL_SLIDES_SELECTOR + '.present' ) ) {
-			var verticalFragments = sortFragments( document.querySelectorAll( VERTICAL_SLIDES_SELECTOR + '.present .fragment:not(.visible)' ) );
+		if( document.querySelector( config.verticalSlidesSelector + '.present' ) ) {
+			var verticalFragments = sortFragments( document.querySelectorAll( config.verticalSlidesSelector + '.present .fragment:not(.visible)' ) );
 
 			if( verticalFragments.length ) {
 				verticalFragments[0].classList.add( 'visible' );
@@ -1491,7 +1490,7 @@ var Reveal = (function(){
 		}
 		// Horizontal slides:
 		else {
-			var horizontalFragments = sortFragments( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.present .fragment:not(.visible)' ) );
+			var horizontalFragments = sortFragments( document.querySelectorAll( config.horizontalSlidesSelector + '.present .fragment:not(.visible)' ) );
 
 			if( horizontalFragments.length ) {
 				horizontalFragments[0].classList.add( 'visible' );
@@ -1515,8 +1514,8 @@ var Reveal = (function(){
 	function previousFragment() {
 
 		// Vertical slides:
-		if( document.querySelector( VERTICAL_SLIDES_SELECTOR + '.present' ) ) {
-			var verticalFragments = sortFragments( document.querySelectorAll( VERTICAL_SLIDES_SELECTOR + '.present .fragment.visible' ) );
+		if( document.querySelector( config.verticalSlidesSelector + '.present' ) ) {
+			var verticalFragments = sortFragments( document.querySelectorAll( config.verticalSlidesSelector + '.present .fragment.visible' ) );
 
 			if( verticalFragments.length ) {
 				verticalFragments[ verticalFragments.length - 1 ].classList.remove( 'visible' );
@@ -1528,7 +1527,7 @@ var Reveal = (function(){
 		}
 		// Horizontal slides:
 		else {
-			var horizontalFragments = sortFragments( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.present .fragment.visible' ) );
+			var horizontalFragments = sortFragments( document.querySelectorAll( config.horizontalSlidesSelector + '.present .fragment.visible' ) );
 
 			if( horizontalFragments.length ) {
 				horizontalFragments[ horizontalFragments.length - 1 ].classList.remove( 'visible' );
@@ -1617,7 +1616,7 @@ var Reveal = (function(){
 			}
 			else {
 				// Fetch the previous horizontal slide, if there is one
-				var previousSlide = document.querySelector( HORIZONTAL_SLIDES_SELECTOR + '.past:nth-child(' + indexh + ')' );
+				var previousSlide = document.querySelector( config.horizontalSlidesSelector + '.past:nth-child(' + indexh + ')' );
 
 				if( previousSlide ) {
 					indexv = ( previousSlide.querySelectorAll( 'section' ).length + 1 ) || undefined;
@@ -1893,7 +1892,7 @@ var Reveal = (function(){
 
 		event.preventDefault();
 
-		var slidesTotal = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).length;
+		var slidesTotal = toArray( document.querySelectorAll( config.horizontalSlidesSelector ) ).length;
 		var slideIndex = Math.floor( ( event.clientX / dom.wrapper.offsetWidth ) * slidesTotal );
 
 		slide( slideIndex );
@@ -2015,7 +2014,7 @@ var Reveal = (function(){
 
 		// Returns the slide at the specified index, y is optional
 		getSlide: function( x, y ) {
-			var horizontalSlide = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR )[ x ];
+			var horizontalSlide = document.querySelectorAll( config.horizontalSlidesSelector )[ x ];
 			var verticalSlides = horizontalSlide && horizontalSlide.querySelectorAll( 'section' );
 
 			if( typeof y !== 'undefined' ) {
@@ -2058,16 +2057,16 @@ var Reveal = (function(){
 
 		// Returns true if we're currently on the first slide
 		isFirstSlide: function() {
-			return document.querySelector( SLIDES_SELECTOR + '.past' ) == null ? true : false;
+			return document.querySelector( config.slidesSelector + '.past' ) == null ? true : false;
 		},
 
 		// Returns true if we're currently on the last slide
 		isLastSlide: function() {
 			if( currentSlide && currentSlide.classList.contains( '.stack' ) ) {
-				return currentSlide.querySelector( SLIDES_SELECTOR + '.future' ) == null ? true : false;
+				return currentSlide.querySelector( config.slidesSelector + '.future' ) == null ? true : false;
 			}
 			else {
-				return document.querySelector( SLIDES_SELECTOR + '.future' ) == null ? true : false;
+				return document.querySelector( config.slidesSelector + '.future' ) == null ? true : false;
 			}
 		},
 
